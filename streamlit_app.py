@@ -13,16 +13,16 @@ st.write(
 name_on_order = st.text_input("Name on Smoothie:")
 st.write("The name on your Smoothie will be: ", name_on_order)
 
-session = get_active_session()
-# cnx = st.connection("snowflake")
-# session = cnx.session()
+# session = get_active_session()
+cnx = st.connection("snowflake")
+session = cnx.session()
 my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'),col('search_on'))
 pd_df = my_dataframe.to_pandas()
 st.dataframe(pd_df)
 st.stop()
 
 
-my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
+# my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
 # st.dataframe(data=my_dataframe, use_container_width=True);
 # my_dataframe = session.table("smoothies.public.orders").filter(col("ORDER_FILLED")==0).collect()
 ingrediant_list = st.multiselect(
