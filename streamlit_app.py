@@ -2,9 +2,10 @@
 import streamlit as st
 # from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col
-import requests
 
-# st.text(smoothiefroot_response.json())
+# import requests
+# smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/all")
+# st.text(smoothiefroot_response)
 
 
 # Write directly to the app
@@ -19,9 +20,12 @@ st.write("The name on your Smoothie will be: ", name_on_order)
 # session = get_active_session()
 cnx = st.connection("snowflake")
 session = cnx.session()
-my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
+my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'),col('search_on'))
 # st.dataframe(data = my_dataframe , use_container_width = True)
-
+# st.stop()
+pd_df = my_dataframe.to_pandas()
+# st.dataframe(pd_df)
+# st.stop()
 
 ingrediant_list = st.multiselect(
     'Choose upto 5 elements:',
@@ -34,9 +38,8 @@ if ingrediant_list:
 
     for fruit_chosen in ingrediant_list:
         ingrediant_string += fruit_chosen+ ' '
-        st.subheader(fruit_chosen + ' Nutrition Information')
-        smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/all")
-        sf_df = st.dataframe(data = smoothiefroot_response.json(), use_container_width = True)
+        search_on=pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
+        st.write('The search value for ', fruit_chosen,' is ', search_on, '.')
         
 
     my_insert_stmt = """ insert into smoothies.public.orders(ingredients,name_on_order)
