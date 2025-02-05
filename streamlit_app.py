@@ -21,6 +21,7 @@ cnx = st.connection("snowflake")
 session = cnx.session()
 my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'),col('search_on'))
 # st.dataframe(data = my_dataframe , use_container_width = True)
+pd_df = my_dataframe.to_pandas()
 
 
 ingrediant_list = st.multiselect(
